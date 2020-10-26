@@ -80,9 +80,9 @@ void steering(int angle){
     //set the low and high inputs
     uint8_t low = 0x00, high = 0x00;
     //call breakup to set low and high
-    breakup(servoCycle, &low, &high)
+    breakup(servoCycle, &low, &high);
 
-    
+
 
 }
 
