@@ -67,6 +67,13 @@ void breakup(int bigNum, uint8_t* low, uint8_t* high){
     /*
         Write Task 1 code here
     */
+
+   //get the low by implicit casting
+   *low = (uint8_t)bigNum;
+
+   //get the high by shifting 8 bits right
+   //and implicit casting
+   *high = (uint8_t)(bigNum >> 8);
 }
 
 void steering(int angle){
