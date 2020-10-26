@@ -91,8 +91,15 @@ void steering(int angle){
     bufWrite[3] = high;     //set the values as high
     success = metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 4, bufRead, 2);
 
+    //check the success of the transfer function
     if(success != 0x00){
+        //if failed, print fail statement
         printf("steering::metal_i2c_transfer low failed\n");
+    }
+    else{   
+        //if passed, print the read data buffers
+        printf("Read Data bufRead[0] (Low): %x\n", bufRead[0]);
+        printf("Read Data bufRead[1] (High) %x\n", bufRead[1]);
     }
 }
 
