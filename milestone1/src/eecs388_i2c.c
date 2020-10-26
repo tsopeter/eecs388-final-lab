@@ -75,7 +75,7 @@ void breakup(int bigNum, uint8_t* low, uint8_t* high){
 /* Task 2*/
 void steering(int angle){
     uint8_t success = 0x01; //false
-    uint8_t diff = 12;  //PCA9685_LED0_ON_L + 12 registers forward
+    uint8_t diff = 6;  //PCA9685_LED0_ON_L + 12 registers forward
     //set the cycle
     int servoCycle = getServoCycle(angle);
 
