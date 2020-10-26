@@ -74,6 +74,8 @@ void breakup(int bigNum, uint8_t* low, uint8_t* high){
 
 /* Task 2*/
 void steering(int angle){
+    uint8_t success = 0x00;
+    uint8_t diff = 12;  //PCA9685_LED0_ON_L + 12 registers forward
     //set the cycle
     int servoCycle = getServoCycle(angle);
 
@@ -82,7 +84,23 @@ void steering(int angle){
     //call breakup to set low and high
     breakup(servoCycle, &low, &high);
 
+    //set buffers for LED1_OFF_L
+    bufWrite[0] = PCA9685_LED0_ON_L + diff;    //set the reg address
+    bufWrite[1] = low;      //set the values as low
+    success = metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 2, bufRead, 1);
 
+    if(success != 0x01){
+        printf("steering::metal_i2c_transfer low failed\n");
+    }
+
+    //set buffers for LED1_OFF_H
+    bufWrite[0] += 1;   //set the reg address
+    bufWrite[1] = high; //set the values as high
+    success = metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 2, bufRead, 1);
+
+    if(success != 0x01){
+        printf("steering::metal_i2c_transfer high failed\n");
+    }
 
 }
 
