@@ -72,10 +72,18 @@ void breakup(int bigNum, uint8_t* low, uint8_t* high){
    *high = (uint8_t)(bigNum >> 8);
 }
 
+/* Task 2*/
 void steering(int angle){
-    /*
-        Write Task 2 code here
-    */
+    //set the cycle
+    int servoCycle = getServoCycle(angle);
+
+    //set the low and high inputs
+    uint8_t low = 0x00, high = 0x00;
+    //call breakup to set low and high
+    breakup(servoCycle, &low, &high)
+
+    
+
 }
 
 void stopMotor(){
