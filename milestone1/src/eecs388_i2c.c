@@ -128,8 +128,28 @@ void driveForward(uint8_t speedFlag){
         Write Task 4 code here
     */
    if(speedFlag >= 1 && speedFlag <= 3){
-       uint8_t speed = (speedFlag - 1) * 2;
-       
+       uint8_t speed = (speedFlag - 1) * 2;     //sets the speed of the vehicle
+       uint16_t forwardDiff = 23;               //forward Diff to move motor
+       uint16_t num = 0x0118 + forwardDiff + (uint16_t)speed;   //number to transfer
+       uint8_t low = 0x00, high = 0x00;         
+       uint8_t succ = 0x00, diff = 0x02;        //difference between register
+       breakup(num, &low, &high);               //breakup the number
+
+        //set buffers
+        bufWrite[0] = PCA9685_LED0_ON_L + diff;
+        bufWrite[1] = low;
+        bufWrite[2] = bufWrite[0] + 1;
+        bufWrite[3] = high;
+
+       if(succ == metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 4, bufRead, 1)){
+           printf("driveForward: transfer successful\n");
+       }
+       else{
+           printf("driveForward: transfer not successful\n");
+       }
+
+
+
    }
 }
 
