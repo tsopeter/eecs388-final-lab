@@ -75,7 +75,7 @@ void breakup(int bigNum, uint8_t* low, uint8_t* high){
 /* Task 2*/
 void steering(int angle){
     uint8_t success = 0x01; //false
-    uint8_t diff = 0x06;  // 6 registers forward
+    uint8_t diff = 0x04;  // 6 registers forward
     //set the cycle
     int servoCycle = getServoCycle(angle);
 
@@ -87,10 +87,11 @@ void steering(int angle){
     //set buffers
     //PCA9685_LEC0_ON_L = 0x06
     bufWrite[0] = PCA9685_LED0_ON_L + diff;    //set the reg address low 0x0C
-    bufWrite[1] = low;      //set the values as low
-    bufWrite[2] = bufWrite[0] + 1;  //set the reg address for high
-    bufWrite[3] = high;     //set the values as high
-    success = metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 4, bufRead, 1);
+    bufWrite[1] = 0;     //set the values as low
+    bufWrite[2] = 0;  //set the reg address for high
+    bufWrite[3] = low;
+    bufWrite[4] = high;    //set the values as high
+    success = metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 5, bufRead, 1);
 
     //check the success of the transfer function
     if(success != 0x00){
@@ -111,11 +112,12 @@ void stopMotor(){
    uint8_t low = 0x18, high = 0x01;
    uint8_t succ = 0x00;
    uint8_t diff = 0x02;
-   bufWrite[0] = PCA9685_LED0_ON_L + diff;  //set register for LED0_OFF_L
-   bufWrite[1] = low;                       //data
-   bufWrite[2] = bufWrite[0] + 0x01;        //set register for LED0_OFF_H
-   bufWrite[3] = high;                      //data
-   if(succ == metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 4, bufRead, 1)){
+   bufWrite[0] = PCA9685_LED0_ON_L;  //set register for LED0_OFF_L
+   bufWrite[1] = 0;                       //data
+   bufWrite[2] = 0;   
+   bufWrite[3] = low;
+   bufWrite[4] = high;                    //data
+   if(succ == metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 5, bufRead, 1)){
        printf("stopMotor: transfer successful\n");  //print statement if transfer == 0x00
    }
    else{
@@ -136,12 +138,13 @@ void driveForward(uint8_t speedFlag){
        breakup(num, &low, &high);               //breakup the number
 
         //set buffers
-        bufWrite[0] = PCA9685_LED0_ON_L + diff;
-        bufWrite[1] = low;
-        bufWrite[2] = bufWrite[0] + 1;
-        bufWrite[3] = high;
+        bufWrite[0] = PCA9685_LED0_ON_L;
+        bufWrite[1] = 0;
+        bufWrite[2] = 0;
+        bufWrite[3] = low;
+        bufWrite[4] = high;
 
-       if(succ == metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 4, bufRead, 1)){
+       if(succ == metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 5, bufRead, 1)){
            printf("driveForward: transfer successful\n");
        }
        else{
@@ -159,19 +162,20 @@ void driveReverse(uint8_t speedFlag){
     */
    if(speedFlag >= 1 && speedFlag <= 3){
        uint8_t speed = (speedFlag - 1) * 2;
-       uint16_t backwardDiff = 23;
+       uint16_t backwardDiff = 13;
        uint16_t num = 0x0118 - (backwardDiff + (uint16_t)speed);
        uint8_t low = 0x00, high = 0x00;
        uint8_t succ = 0x00, diff = 0x02;
        breakup(num, &low, &high);
 
        //set buffers
-       bufWrite[0] = PCA9685_LED0_ON_L + diff;
-       bufWrite[1] = low;
-       bufWrite[2] = bufWrite[0] + 1;
-       bufWrite[3] = high;
+       bufWrite[0] = PCA9685_LED0_ON_L;
+       bufWrite[1] = 0;
+       bufWrite[2] = 0;
+       bufWrite[3] = low;
+       bufWrite[4] = high;
 
-       if(succ == metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 4, bufRead, 1)){
+       if(succ == metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 5, bufRead, 1)){
            printf("driveReverse: transfer successful\n");
        }
        else{
@@ -180,9 +184,35 @@ void driveReverse(uint8_t speedFlag){
    }
 }
 
+void stop(){
+    delay(2000);
+}
+
 int main()
 {
     set_up_I2C();
+    stopMotor();    //configure the motors
+    steering(0);    //set steering to 0 deg
+    stop();    //stop for 2 sec
+
+    driveForward(1);    //drive forward with speedFlag == 1 (303)
+    stop();     //delay for 2 sec
+
+    steering(20);    //set steering to 20 deg
+    stop();   //delay for 2 sec
+
+    stopMotor();
+    stop();
+
+    driveForward(1);
+    stop();
+
+    steering(0);
+    stop();
+
+    stopMotor();
+
+
     
     //Defining the breakup function
     /*
