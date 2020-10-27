@@ -95,11 +95,11 @@ void steering(int angle){
     //check the success of the transfer function
     if(success != 0x00){
         //if failed, print fail statement
-        printf("steering::metal_i2c_transfer low failed\n");
+        printf("steering: transfer failed\n");
     }
     else{   
         //if passed, print the read data buffers
-        printf("Read Data bufRead[0]: %x\n", bufRead[0]);
+        printf("steering: transfer successful\n");
     }
 }
 
