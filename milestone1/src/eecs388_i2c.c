@@ -85,7 +85,8 @@ void steering(int angle){
     breakup(servoCycle, &low, &high);
 
     //set buffers
-    bufWrite[0] = PCA9685_LED0_ON_L + diff;    //set the reg address low
+    //PCA9685_LEC0_ON_L = 0x06
+    bufWrite[0] = PCA9685_LED0_ON_L + diff;    //set the reg address low 0x0C
     bufWrite[1] = low;      //set the values as low
     bufWrite[2] = bufWrite[0] + 1;  //set the reg address for high
     bufWrite[3] = high;     //set the values as high
