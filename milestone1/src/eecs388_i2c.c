@@ -107,15 +107,19 @@ void stopMotor(){
     /*
         Write Task 3 code here
     */
+   //low + high = 0x0118 = 280d
    uint8_t low = 0x18, high = 0x01;
    uint8_t succ = 0x00;
    uint8_t diff = 0x02;
-   bufWrite[0] = PCA9685_LED0_ON_L + diff;
-   bufWrite[1] = low;
-   bufWrite[2] = bufWrite[0] + 0x01;
-   bufWrite[3] = high;
+   bufWrite[0] = PCA9685_LED0_ON_L + diff;  //set register for LED0_OFF_L
+   bufWrite[1] = low;                       //data
+   bufWrite[2] = bufWrite[0] + 0x01;        //set register for LED0_OFF_H
+   bufWrite[3] = high;                      //data
    if(succ == metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 4, bufRead, 1)){
-       printf("stopMotor: transfer successful\n");
+       printf("stopMotor: transfer successful\n");  //print statement if transfer == 0x00
+   }
+   else{
+       printf("stopMotor: transfer failed\n");      //print statement if transfer != 0x00
    }
 }
 
