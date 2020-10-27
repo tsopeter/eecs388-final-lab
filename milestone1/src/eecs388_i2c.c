@@ -159,7 +159,24 @@ void driveReverse(uint8_t speedFlag){
     */
    if(speedFlag >= 1 && speedFlag <= 3){
        uint8_t speed = (speedFlag - 1) * 2;
+       uint16_t backwardDiff = 23;
+       uint16_t num = 0x0118 - (backwardDiff + (uint16_t)speed);
+       uint8_t low = 0x00, high = 0x00;
+       uint8_t succ = 0x00, diff = 0x02;
+       breakup(num, &low, &high);
 
+       //set buffers
+       bufWrite[0] = PCA9685_LED0_ON_L + diff;
+       bufWrite[1] = low;
+       bufWrite[2] = bufWrite[0] + 1;
+       bufWrite[3] = high;
+
+       if(succ == metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 4, bufRead, 1)){
+           printf("driveReverse: transfer successful\n");
+       }
+       else{
+           printf("driveReverse: transfer not successful\n");
+       }
    }
 }
 
