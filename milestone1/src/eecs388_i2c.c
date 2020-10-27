@@ -86,7 +86,7 @@ void steering(int angle){
 
     //set buffers
     //PCA9685_LEC0_ON_L = 0x06
-    bufWrite[0] = PCA9685_LED0_ON_L + diff;    //set the reg address low 0x0C
+    bufWrite[0] = PCA9685_LED0_ON_L + diff;    //set the reg address low 0x0CA
     bufWrite[1] = 0;     //set the values as low
     bufWrite[2] = 0;  //set the reg address for high
     bufWrite[3] = low;
