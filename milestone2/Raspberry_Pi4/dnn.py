@@ -12,6 +12,10 @@ import math
 import numpy as np
 import serial
 
+#set the serial
+ser0 = serial.Serial(port = "/dev/ttyAMA1", baudrate = 115200)
+ser1 = serial.Serial(port = "/dev/ttyAMA2", baudrate = 115200)
+
 # Radian <-> Degree conversion functions
 def deg2rad(deg):
         return deg * math.pi / 180.0
@@ -89,7 +93,7 @@ while(1):
 		tot_time  = (pred_end - cam_start)*1000
 
 		print('pred: {:0.2f} deg. took: {:0.2f} ms | cam={:0.2f} prep={:0.2f} pred={:0.2f}'.format(deg, tot_time, cam_time, prep_time, pred_time))
-
+        
 		#Don't include the timings for the first frame due to cache warmup
 		if first_frame:
 			first_frame = False
