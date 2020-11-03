@@ -20,16 +20,16 @@ int main()
     uint8_t data = 0x00;
 
     //run
-    while (1) {
+    while (1){
         // YOUR CODE HERE
 
         //run the code when serial uart1 is ready
-        if(ser_isread(UART1)){
+        if(ser_isready(UART1)){
             //get data from uart1
             data = ser_read(UART1);
 
             //output data back to uart0
-            ser_printline(UART0, data);
+            ser_write(UART1, data);
 
         }
     }
