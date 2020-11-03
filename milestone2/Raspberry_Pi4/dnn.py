@@ -16,13 +16,16 @@ import serial
 ser0 = serial.Serial(port = "/dev/ttyAMA1", baudrate = 115200)
 ser1 = serial.Serial(port = "/dev/ttyAMA2", baudrate = 115200)
 
+#open the serial connections
 ser0.open()
 ser1.open()
+
+#not used
 #while True:
 #    image = camera.read()
 #    angle = dnn_interfence(image)
 #    ser1.write(bytes(rad2deg(angle)))
-#    Wait_till_nex_period()
+#    Wait_till_next_period()
 #ser0.close()
 #ser1.close()
 
@@ -102,6 +105,7 @@ while(1):
 		pred_time = (pred_end - pred_start)*1000
 		tot_time  = (pred_end - cam_start)*1000
 
+        #write to the serial connection in byte
         ser1.write(byte(deg))
 
 		print('pred: {:0.2f} deg. took: {:0.2f} ms | cam={:0.2f} prep={:0.2f} pred={:0.2f}'.format(deg, tot_time, cam_time, prep_time, pred_time))
@@ -123,12 +127,18 @@ while(1):
 
 cap.release()
 
-#for v
+#for video
 while(1):
+    #read from camera
     image = camera.read()
+
+    #get radians, change to deg, change to bytes
     ser1.write(bytes(rad2deg(dnn_interfence(image))))
+
+    #wait
     Wait_till_next_period()
 
+#close connections
 ser0.close()
 ser1.close()
 #Calculate and output FPS/frequency
