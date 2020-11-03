@@ -4,6 +4,9 @@
 
 #include "eecs388_lib.h"
 
+
+#define UART0 0
+#define UART1 1 
 int main()
 {
     // initialize UART channels
@@ -13,8 +16,22 @@ int main()
     printf("Setup completed.\n");
     printf("Begin the main loop.\n");
     
+    //data in byte
+    uint8_t data = 0x00;
+
+    //run
     while (1) {
         // YOUR CODE HERE
+
+        //run the code when serial uart1 is ready
+        if(ser_isread(UART1)){
+            //get data from uart1
+            data = ser_read(UART1);
+
+            //output data back to uart0
+            ser_write(UART0, (char)data);
+
+        }
     }
     return 0;
 }
