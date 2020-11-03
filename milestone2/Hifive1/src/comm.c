@@ -29,7 +29,7 @@ int main()
             data = ser_read(UART1);
 
             //output data back to uart0
-            ser_write(UART1, data);
+            ser_write(UART0, data);
 
         }
     }
