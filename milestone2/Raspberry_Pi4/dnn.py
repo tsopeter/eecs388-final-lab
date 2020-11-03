@@ -16,6 +16,16 @@ import serial
 ser0 = serial.Serial(port = "/dev/ttyAMA1", baudrate = 115200)
 ser1 = serial.Serial(port = "/dev/ttyAMA2", baudrate = 115200)
 
+ser0.open()
+ser1.open()
+#while True:
+#    image = camera.read()
+#    angle = dnn_interfence(image)
+#    ser1.write(bytes(rad2deg(angle)))
+#    Wait_till_nex_period()
+#ser0.close()
+#ser1.close()
+
 # Radian <-> Degree conversion functions
 def deg2rad(deg):
         return deg * math.pi / 180.0
@@ -92,8 +102,11 @@ while(1):
 		pred_time = (pred_end - pred_start)*1000
 		tot_time  = (pred_end - cam_start)*1000
 
+        ser1.write(byte(deg))
+
 		print('pred: {:0.2f} deg. took: {:0.2f} ms | cam={:0.2f} prep={:0.2f} pred={:0.2f}'.format(deg, tot_time, cam_time, prep_time, pred_time))
-        
+
+
 		#Don't include the timings for the first frame due to cache warmup
 		if first_frame:
 			first_frame = False
@@ -110,6 +123,14 @@ while(1):
 
 cap.release()
 
+#for v
+while(1):
+    image = camera.read()
+    ser1.write(bytes(rad2deg(dnn_interfence(image))))
+    Wait_till_next_period()
+
+ser0.close()
+ser1.close()
 #Calculate and output FPS/frequency
 fps = curFrame / (time.time() - time_start)
 print('completed inference, total frames: {}, average fps: {} Hz'.format(curFrame+1, round(fps, 1)))
