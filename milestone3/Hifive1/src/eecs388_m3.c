@@ -137,6 +137,12 @@ void raspberrypi_int_handler(int devid){
 
 }
 
+int convertStringtoInterger(char* str){
+    int val = 0x00;
+    sscanf(str, "%d", val);
+    return val;
+}
+
 
 int main(){
     // Initialize I2C
@@ -160,6 +166,9 @@ int main(){
     // Drive loop
     while (1){
        if(ser_isread(UART1)){
+           //convert to string
+           //g_angle = convertStringtoInterger(ser_r)
+
            g_angle = ser_read(UART1);
            steering(g_angle);
        }
