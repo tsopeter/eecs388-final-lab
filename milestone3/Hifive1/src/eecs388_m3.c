@@ -160,7 +160,7 @@ int main(){
     // Drive loop
     uint8_t deg = 0x00;
     while (1){
-       if(ser_isread(UART1){
+       if(ser_isread(UART1)){
            deg = ser_read(UART1);
            steering(deg);
        }
