@@ -157,15 +157,13 @@ int main(){
     g_angle = 0;
 
     // Drive loop
-    while (1) {
-        /*
-        if (is UART1 ready?)
-        {
-            deg = read from UART1.
-
-            steering(deg)
-        }
-        */
+    while (1){
+       if(ser_isread(UART1){
+           deg = ser_read(UART1);
+           steering(deg);
+       })
     }
     return 0;
+
+
 }
