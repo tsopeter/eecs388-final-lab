@@ -132,6 +132,7 @@ void driveReverse(uint8_t speedFlag){
     }
 }
 
+//interrupt handler
 void raspberrypi_int_handler(int devid){
 
 }
@@ -162,8 +163,8 @@ int main(){
        if(ser_isread(UART1){
            deg = ser_read(UART1);
            steering(deg);
-       })
-    }
+       }
+    };
     return 0;
 
 
