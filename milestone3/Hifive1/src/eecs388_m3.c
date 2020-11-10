@@ -135,8 +135,7 @@ void raspberrypi_int_handler(int devid){
 }
 
 
-int main()
-{
+int main(){
     // Initialize I2C
     set_up_I2C();
     delay(2000);
