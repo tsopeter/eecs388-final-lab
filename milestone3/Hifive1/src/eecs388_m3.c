@@ -61,33 +61,76 @@ void set_up_I2C()
     printf("Set register is %d\n",bufRead[0]);
 } 
 
-void breakup(int bigNum, uint8_t* low, uint8_t* high)
-{
-
+void breakup(int bigNum, uint8_t* low, uint8_t* high){
+    *low = (uint8_t)bigNum;
+    *high = (uint8_t)(bigNum >> 8);
 }
 
-void steering(int angle)
-{
+void steering(int angle){
+    uint8_t diff = 0x04;
+    uint8_t low = 0x00, high = 0x00;
+    breakup(getServoCycle(angle), &low, &high);
 
+    //set buffers
+    bufWrite[0] = PCA9685_LED0_ON_L + diff;
+    bufWrite[1] = bufWrite[2] = 0;
+    bufWrite[3] = low;
+    bufWrite[4] = high;
+
+    metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 5, bufRead, 1);
 }
 
-void stopMotor()
-{
+void stopMotor(){
+    uint8_t low = 0x18, high = 0x01;
 
+    //set buffers
+    bufWrite[0] = PCA9685_LED0_ON_L;
+    bufWrite[1] = bufWrite[2] = 0;
+    bufWrite[3] = low;
+    bufWrite[4] = high;
+
+    metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 5, bufRead, 1);
 }
 
-void driveForward(uint8_t speedFlag)
-{
+void driveForward(uint8_t speedFlag){
+    if(speedFlag >= 1 && speedFlag <= 3){
+        uint16_t speed = (speedFlag - 1) * 2;
+        uint16_t forwardDiff = 23;
+        uint16_t num = 0x0118 + forwardDiff + speed;
+        uint8_t low = 0x00, high = 0x00;
+        breakup(num, &low, &high);
 
+        //set buffers
+        bufWrite[0] = PCA9685_LED0_ON_L;
+        bufWrite[1] = bufWrite[2] = 0;
+        bufWrite[3] = low;
+        bufWrite[4] = high;
+
+        metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 5, bufRead, 1);
+
+    }
 }
 
-void driveReverse(uint8_t speedFlag)
-{
+void driveReverse(uint8_t speedFlag){
+    if(speedFlag >= 1 && speedFlag <= 3){
+        uint16_t speed = (speedFlag - 1) * 2;
+        uint16_t backwardDiff = 13;
+        uint16_t num = 0x118 - (backwardDiff + speed);
+        uint8_t low = 0x00, high = 0x00;
+        breakup(num, &low, &high);
 
+        //set buffers
+        bufWrite[0] = PCA9685_LED0_ON_L;
+        bufWrite[1] = bufWrite[2] = 0;
+        bufWrite[3] = low;
+        bufWrite[4] = high;
+
+        metal_i2c_transfer(i2c, PCA9685_I2C_ADDRESS, bufWrite, 5, bufRead, 1);
+
+    }
 }
 
-void raspberrypi_int_handler(int devid)
-{
+void raspberrypi_int_handler(int devid){
 
 }
 
