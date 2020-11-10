@@ -4,6 +4,9 @@
 #include "eecs388_lib.h"
 #include "metal/i2c.h"
 
+#define UART0 0
+#define UART1 1
+
 struct metal_i2c *i2c;
 uint8_t bufWrite[5];
 uint8_t bufRead[1];
@@ -146,7 +149,7 @@ int main(){
     delay(2000);
 
     // initialize UART channels
-    ser_setup(0); // uart0 (receive from raspberry pi)
+    ser_setup(UART0); // uart0 (receive from raspberry pi)
     
     printf("Setup completed.\n");
     printf("Begin the main loop.\n");
