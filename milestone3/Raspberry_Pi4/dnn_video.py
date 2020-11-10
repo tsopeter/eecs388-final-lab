@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 from __future__ import division
 
 # Imports
@@ -29,7 +29,7 @@ config = tf.ConfigProto(intra_op_parallelism_threads=NCPU, \
                         allow_soft_placement=True, \
                         device_count = {'CPU': 1})
 
-#The max number of frames to be processed, 
+#The max number of frames to be processed,
 #    and the number of frames already processed
 NFRAMES = 1000
 curFrame = 0
@@ -37,6 +37,13 @@ curFrame = 0
 #Periodic task options
 period = 50
 is_periodic = True
+
+#define constants
+portid1 = "/dev/ttyAMA1"
+brate = 115200
+
+ser1.Serial(port = portid1, baudrate = brate);
+
 
 #Load the model
 sess = tf.InteractiveSession(config=config)
@@ -71,13 +78,13 @@ while(1):
 			break
 
 		prep_start = time.time()
-		
+
 		#Preprocess the input frame
 		img = cv2.resize(img, (200, 66))
 		img = img / 255.
 
 		pred_start = time.time()
-		
+
 		#Feed the frame to the model and get the control output
 		rad = model.y.eval(feed_dict={model.x: [img]})[0][0]
 		deg = rad2deg(rad)
@@ -90,21 +97,23 @@ while(1):
 		tot_time  = (pred_end - cam_start)*1000
 
 		print('pred: {:0.2f} deg. took: {:0.2f} ms | cam={:0.2f} prep={:0.2f} pred={:0.2f}'.format(deg, tot_time, cam_time, prep_time, pred_time))
-		
+
+        ser1.write(bytes(deg))
+
 		#Don't include the timings for the first frame due to cache warmup
 		if first_frame:
 			first_frame = False
 		else:
 			tot_time_list.append(tot_time)
 			curFrame += 1
-        
+
 		#Wait for next period
 		wait_time = (period - tot_time) / 1000
 		if is_periodic and wait_time > 0:
 			time.sleep(wait_time)
 	else:
 		break
-	
+
 cap.release()
 
 
