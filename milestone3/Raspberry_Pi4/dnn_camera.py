@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 from __future__ import division
 
 # Imports
@@ -36,10 +36,20 @@ saver = tf.compat.v1.train.Saver()
 model_load_path = "model/model.ckpt"
 saver.restore(sess, model_load_path)
 
+#name of port
+portid1 = "/dev/ttyAMA1"
+portid2 = "/dev/ttyAMA2"
+
+#baudrate
+portbaudrate = 115200
+
+#serial objects
+ser1.Serial(port = portid1, baudrate = portbaudrate);
+
 # Main Loop
 with picamera.PiCamera() as camera:
     with picamera.array.PiRGBArray(camera, (640, 480)) as rawCapture:
-        
+
         # Init
         # Set framerate to 20 because dnn processes every 50ms
         camera.resolution = (640, 480)
@@ -59,9 +69,9 @@ with picamera.PiCamera() as camera:
             img = cv2.resize(image, (200, 66))
             img = img / 255
 
-            # Feed the model and return the predicted angle 
+            # Feed the model and return the predicted angle
             rad = model.y.eval(feed_dict={model.x: [img]})[0][0]
-            deg = rad2deg(rad) 
+            deg = rad2deg(rad)
 
             # Displays the image
             cv2.imshow('Frame', image)
@@ -69,6 +79,10 @@ with picamera.PiCamera() as camera:
 
             # Clear the stream for the next frame
             rawCapture.truncate(0)
+
+            #send the deg to HiFive Uart1
+            data_send = bytes(deg)
+            ser1.write(data_send)
 
             # Repeat until user hits 'q'
             if key == ord('q'):

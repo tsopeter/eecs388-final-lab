@@ -171,6 +171,7 @@ int main(){
 
            g_angle = ser_read(UART1);
            steering(g_angle);
+           ser_write(UART0, g_angle);
        }
     };
     return 0;
