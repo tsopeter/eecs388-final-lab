@@ -42,8 +42,9 @@ is_periodic = True
 portid1 = "/dev/ttyAMA1"
 brate = 115200
 
-ser1.Serial(port = portid1, baudrate = brate);
+ser1.Serial(port = portid1, baudrate = brate)
 
+ser1.open()
 
 #Load the model
 sess = tf.InteractiveSession(config=config)

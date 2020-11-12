@@ -162,16 +162,23 @@ int main(){
     
     // Initialize global angle
     g_angle = 0;
-
+    char input[BUFFER_SIZE];
+    volatile int y_angle = 0;
+    int nLength = 0;
     // Drive loop
     while (1){
-       if(ser_isread(UART1)){
+       if(ser_isready(UART1)){
            //convert to string
            //g_angle = convertStringtoInterger(ser_r)
+           nLength = ser_readline(UART1, BUFFER_SIZE, input);
 
-           g_angle = ser_read(UART1);
+           sscanf(input + 0x06, "%d", &g_angle);
+           //steering(g_angle);
+           //printf("%d", g_angle);
+       }
+       if(y_angle != g_angle){
            steering(g_angle);
-           ser_write(UART0, g_angle);
+           y_angle = g_angle;
        }
     };
     return 0;

@@ -17,8 +17,6 @@ ser0 = serial.Serial(port = "/dev/ttyAMA1", baudrate = 115200)
 ser1 = serial.Serial(port = "/dev/ttyAMA2", baudrate = 115200)
 
 #open the serial connections
-ser0.open()
-ser1.open()
 
 #not used
 #while True:

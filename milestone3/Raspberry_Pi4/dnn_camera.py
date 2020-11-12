@@ -37,8 +37,8 @@ model_load_path = "model/model.ckpt"
 saver.restore(sess, model_load_path)
 
 #name of port
-portid1 = "/dev/ttyAMA1"
-portid2 = "/dev/ttyAMA2"
+portid1 = "/dev/serial0"
+portid2 = "/dev/serial1"
 
 #baudrate
 portbaudrate = 115200
