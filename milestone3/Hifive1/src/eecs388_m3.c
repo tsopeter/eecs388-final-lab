@@ -143,6 +143,35 @@ int convertStringtoInterger(char* str){
     return val;
 }
 
+void reverse(){
+    driveReverse(1);
+    stopMotor();
+    delay(2000);
+    driveReverse(1);
+}
+
+uint8_t readFromTOF(){
+    uint16_t tstop = 75;
+    //read from tfmini
+    if('Y' == ser_read(UART1) && 'Y' == ser_read(UART1)){
+        uint16_t dist = ser_read(UART1);
+        uint8_t dist_temp = ser_read(UART1);
+        dist |= ((uint16_t)dist_temp << 8);
+
+        if(dist < tstop){
+            stopMotor();
+            return 1;
+        }
+        else{
+            return 0;
+        }
+
+    }
+    else{
+        return 0;
+    }
+
+}
 
 int main(){
     // Initialize I2C
@@ -155,7 +184,9 @@ int main(){
     delay(2000);
 
     // initialize UART channels
-    ser_setup(UART0); // uart0 (receive from raspberry pi)
+    ser_setup(UART1); // uart1 (receive from raspberry pi)
+    ser_setup(UART0); // uart0 (receive from tfmini)
+
     
     printf("Setup completed.\n");
     printf("Begin the main loop.\n");
@@ -163,23 +194,45 @@ int main(){
     // Initialize global angle
     g_angle = 0;
     char input[BUFFER_SIZE];
+    char temp[BUFFER_SIZE];
+
+    for(int i = 0; i < BUFFER_SIZE; i++){
+        input[i] = temp[i] = ' ';
+    }
     volatile int y_angle = 0;
     int nLength = 0;
     // Drive loop
-    while (1){
-       if(ser_isready(UART1)){
-           //convert to string
-           //g_angle = convertStringtoInterger(ser_r)
-           nLength = ser_readline(UART1, BUFFER_SIZE, input);
 
-           sscanf(input + 0x06, "%d", &g_angle);
-           //steering(g_angle);
-           //printf("%d", g_angle);
+    uint8_t flag = 0;
+    while (1){
+        /*
+        if(ser_isready(UART0)){
+            if(readFromTOF()){
+                flag = 1;
+            }
+        }
+
+        if(flag){
+            break;
+        }
+        */
+       if(ser_isready(UART0)){
+           nLength = ser_readline(UART0, BUFFER_SIZE, input);
+
+           //if same, discard
+           if(0 != strncmp(input, temp, nLength)){
+               //get number
+               sscanf(input, "%d", &y_angle);
+
+               //reassign input
+               for(int i = 0; i < BUFFER_SIZE; i++){
+                   temp[i] = input[i];
+               }
+
+               steering(y_angle);
+           }
        }
-       if(y_angle != g_angle){
-           steering(g_angle);
-           y_angle = g_angle;
-       }
+
     };
     return 0;
 
